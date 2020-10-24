@@ -2,4 +2,4 @@ django
 djangorestframework
 gunicorn
 django-heroku
-requests
+requestss
