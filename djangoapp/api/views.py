@@ -3,8 +3,12 @@ from .models import Project
 from rest_framework import viewsets
 from rest_framework import permissions
 from djangoapp.api.serializers import UserSerializer,ProjectSerializer
+import requests
 
-
+def index(request):
+    r = requests.get('http://httpbin.org/status/418')
+    print(r.text)
+    return HttpResponse('<pre>' + r.text + '</pre>')
 
 class UserViewSet(viewsets.ModelViewSet):
     """

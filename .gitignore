@@ -1,0 +1,4 @@
+staticfiles
+djangoapp/__pycache__
+djangoapp/api/__pycache__
+djangoapp/api/migrations
