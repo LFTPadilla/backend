@@ -1,5 +1,12 @@
-django
-djangorestframework
+asgiref
+autopep8
+Django==3.1.*
+pycodestyle
+pytz
+sqlparse
+Unipath
+dj-database-url
+python-decouple
 gunicorn
-django-heroku
-requests
+whitenoise
+rest_framework
