@@ -30,7 +30,6 @@ urlpatterns = [
     
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('', include(router.urls)),
-    path("", include("authentication.urls")),  # add this
-    path('api-auth/', include('rest_framework.urls')),
+    path("apigateway/", include("authentication.urls")),  # add this
     path("", include("app.urls"))  # add this
 ]
