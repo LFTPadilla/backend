@@ -15,6 +15,7 @@ from django.http import HttpResponse
 from .forms import LoginForm, SignUpForm
 
 def login_view(request):
+    print("entro al ",request)
     form = LoginForm(request.POST or None)
 
     msg = None
