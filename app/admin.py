@@ -11,5 +11,5 @@ admin.site.register(IterationTaskHistorial)
 
 admin.site.register(TaskProxy)
 admin.site.register(PlanningEntry)
-#admin.site.register(PlanningPeriod)
+admin.site.register(PlanningPeriod)
 admin.site.register(TeamMember)
