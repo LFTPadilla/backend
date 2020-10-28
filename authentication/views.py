@@ -33,27 +33,27 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
-@csrf_exempt #eximo autentificacion
 def login_view(request):
+    form = LoginForm(request.POST or None)
+
     msg = None
-    serviceObj = ServiceObject('Auth','','CreateSession')
-    print('request ', request)
-    
+
     if request.method == "POST":
-        data = JSONParser().parse(request)
-        print(data)
-        user = authenticate(username=data['login'], password=data['password'])
-        print("USUARIO ",user)
-        if user is not None:
-            userSerializer = UserSerializer(user,many=False)
-            serviceObj.User = userSerializer.data
-            login(request, user)
-            serviceObj.Success = True
-        else:    
-            serviceObj.Messege = 'Invalid credentials' 
-        
-    
-    return JsonResponse(serviceObj.toJson(), safe=False)
+
+        if form.is_valid():
+            username = form.cleaned_data.get("username")
+            password = form.cleaned_data.get("password")
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect("/")
+            else:    
+                msg = 'Invalid credentials'    
+        else:
+            msg = 'Error validating the form'    
+
+    return render(request, "accounts/login.html", {"form": form, "msg" : msg})
+
     
 
 def register_user(request):
