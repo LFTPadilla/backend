@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 # Create your models here.
 
@@ -183,6 +184,7 @@ class PlanningPeriod(models.Model):
 
 class TeamMember(models.Model):
     
+    user = models.OneToOneField(User, on_delete=models.CASCADE, default=-1)
     Document = models.CharField(primary_key=True, max_length=50)
     
     Names =  models.CharField(max_length=100)
