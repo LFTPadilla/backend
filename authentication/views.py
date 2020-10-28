@@ -11,36 +11,56 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.forms.utils import ErrorList
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from .forms import LoginForm, SignUpForm
+import base64
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.models import User
+from .serializers import UserSerializer
+from .model.ServiceObject import ServiceObject,ServiceObjectEncoder
+from rest_framework import routers, serializers, viewsets
+from rest_framework.parsers import JSONParser
+import json
+# Serializers define the API representation.
+class UserSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id','username']
 
+# ViewSets define the view behavior.
+class UserViewSet(viewsets.ModelViewSet):
+    
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+@csrf_exempt #eximo autentificacion
 def login_view(request):
-    print("entro al ",request)
-    form = LoginForm(request.POST or None)
-
     msg = None
-
+    serviceObj = ServiceObject('Auth','','CreateSession')
+    print('request ', request)
+    
     if request.method == "POST":
-
-        if form.is_valid():
-            username = form.cleaned_data.get("username")
-            password = form.cleaned_data.get("password")
-            user = authenticate(username=username, password=password)
-            if user is not None:
-                login(request, user)
-                return redirect("/")
-            else:    
-                msg = 'Invalid credentials'    
-        else:
-            msg = 'Error validating the form'    
-
-    return render(request, "accounts/login.html", {"form": form, "msg" : msg})
+        data = JSONParser().parse(request)
+        print(data)
+        user = authenticate(username=data['login'], password=data['password'])
+        print("USUARIO ",user)
+        if user is not None:
+            userSerializer = UserSerializer(user,many=False)
+            serviceObj.User = userSerializer.data
+            login(request, user)
+            serviceObj.Success = True
+        else:    
+            serviceObj.Messege = 'Invalid credentials' 
+        
+    
+    return JsonResponse(serviceObj.toJson(), safe=False)
+    
 
 def register_user(request):
 
     msg     = None
     success = False
-
+    
     if request.method == "POST":
         form = SignUpForm(request.POST)
         if form.is_valid():
