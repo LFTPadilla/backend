@@ -57,7 +57,7 @@ def switch_active_member(request,doc):
 @login_required(login_url="/update-member/")
 def update_member(request, doc, names, mail, proxy_factor, av_week_hours, active):
 
-    member = TeamMember.objects.filter(Document=pk)
+    member = TeamMember.objects.filter(Document=doc)
     member.update(Document=doc, Names=names, Mail=mail, ProxyFactor=proxy_factor, AvailableWeekHours=av_week_hours, Active=not('Active')) 
     return list_members(request)
 
