@@ -160,7 +160,7 @@ class PlanningEntry(models.Model):
     def __str__(self):
         return "PlanningEntry: {}| Assigned to:{}".format(self.IterationTaskCode,self.Document)
  
-'''
+
 class PlanningPeriod(models.Model):
   
    PeriodId = models.AutoField(primary_key=True)
@@ -180,8 +180,7 @@ class PlanningPeriod(models.Model):
  
    def __str__(self):
        return "{}|{}".format(self.PeriodId,self.PeriodTitle)
-    
-''' 
+
 class TeamMember(models.Model):
     
     Document = models.CharField(primary_key=True, max_length=50)
