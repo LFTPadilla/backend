@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
 from django.template import loader
 from django.http import HttpResponse, JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 from django import template
 
 from .models import TeamMember
@@ -39,7 +40,8 @@ def pages(request):
         return HttpResponse(html_template.render(context, request))
 
 
-@login_required(login_url="/list-members/")
+#@login_required(login_url="/list-members/")
+@csrf_exempt #eximo autentificacion
 def list_members(request):
 
     team_members = TeamMember.objects.all() 
