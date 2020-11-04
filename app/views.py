@@ -10,8 +10,8 @@ from django.template import loader
 from django.http import HttpResponse, JsonResponse
 from django import template
 
-from .models import TeamMember
-from .serializer import TeamMemberSerializer
+from .models import TeamMember, Project
+from .serializer import TeamMemberSerializer, ProjectSerializer
 
 @login_required(login_url="/login/")
 def index(request):
@@ -44,6 +44,14 @@ def list_members(request):
 
     team_members = TeamMember.objects.all() 
     serializer = TeamMemberSerializer(team_members, many=True)
+
+    return  JsonResponse(serializer.data, safe=False)
+
+@login_required(login_url="/list-projects/")
+def list_projects(request):
+
+    projects = Project.objects.all()
+    serializer = ProjectSerializer(projects, many=True)
 
     return  JsonResponse(serializer.data, safe=False)
 
