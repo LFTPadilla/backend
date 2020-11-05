@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
 from django.template import loader
 from django.http import HttpResponse, JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 from django import template
 
 from .models import TeamMember, Project
@@ -39,7 +40,8 @@ def pages(request):
         return HttpResponse(html_template.render(context, request))
 
 
-@login_required(login_url="/list-members/")
+#@login_required(login_url="/list-members/")
+@csrf_exempt #eximo autentificacion
 def list_members(request):
 
     team_members = TeamMember.objects.all() 
@@ -74,3 +76,25 @@ def create_member(request, doc, names, mail, proxy_factor, av_week_hours, active
 
     TeamMember.objects.create(Document=doc, Names=names, Mail=mail, ProxyFactor=proxy_factor, AvailableWeekHours=av_week_hours, Active=not('Active')) 
     return list_members(request)
+
+
+@login_required(login_url="/login/")
+def pages(request):
+    context = {}
+    # All resource paths end in .html.
+    # Pick out the html file name from the url. And load that template.
+    try:
+        
+        load_template = request.path.split('/')[-1]
+        html_template = loader.get_template( load_template )
+        return HttpResponse(html_template.render(context, request))
+        
+    except template.TemplateDoesNotExist:
+
+        html_template = loader.get_template( 'error-404.html' )
+        return HttpResponse(html_template.render(context, request))
+
+    except:
+    
+        html_template = loader.get_template( 'error-500.html' )
+        return HttpResponse(html_template.render(context, request))
