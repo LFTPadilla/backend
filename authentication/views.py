@@ -22,7 +22,7 @@ from rest_framework import routers, serializers, viewsets
 from rest_framework.parsers import JSONParser
 import json
 from django.views.decorators.csrf import csrf_protect
-from app.model.service_object import ServiceObject
+
 
 
 @csrf_exempt 
