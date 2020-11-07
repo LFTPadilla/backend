@@ -21,38 +21,37 @@ from .model.ServiceObject import ServiceObject,ServiceObjectEncoder
 from rest_framework import routers, serializers, viewsets
 from rest_framework.parsers import JSONParser
 import json
-# Serializers define the API representation.
-class UserSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = User
-        fields = ['id','username']
+from django.views.decorators.csrf import csrf_protect
+from app.model.service_object import ServiceObject
 
-# ViewSets define the view behavior.
-class UserViewSet(viewsets.ModelViewSet):
-    
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
 
+@csrf_exempt 
 def login_view(request):
-    form = LoginForm(request.POST or None)
-
-    msg = None
-
+    serviceObj = {
+        "Success": False,
+        "Messege": '',
+        "Data":[]
+    };
+    print(serviceObj)
     if request.method == "POST":
-
-        if form.is_valid():
-            username = form.cleaned_data.get("username")
-            password = form.cleaned_data.get("password")
-            user = authenticate(username=username, password=password)
-            if user is not None:
-                login(request, user)
-                return redirect("/")
-            else:    
-                msg = 'Invalid credentials'    
+        data = JSONParser().parse(request)
+        username = data['login']
+        password = data['password']
+        user = authenticate(username=username, password=password)
+        print(user)
+        if user is not None:
+            log = login(request, user)
+            serviceObj.Success = True
+            print(log)
         else:
-            msg = 'Error validating the form'    
+            msg = 'Invalid credentials'   
 
-    return render(request, "accounts/login.html", {"form": form, "msg" : msg})
+    dataReturn = json.dumps(str(serviceObj))
+
+    print(dataReturn)
+    print(json.loads(str(serviceObj.__dict__)))
+    return  JsonResponse(dataReturn, safe=False)
+    #return render(request, "accounts/login.html", {"form": form, "msg" : msg})
 
     
 
