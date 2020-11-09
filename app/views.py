@@ -49,9 +49,17 @@ def list_members(request):
 
     return  JsonResponse(serializer.data, safe=False)
 
-@login_required(login_url="/list-projects/")
+#@login_required(login_url="/list-projects/")
+@csrf_exempt #eximo autentificacion
 def list_projects(request):
 
+    projects = Project.objects.all()
+    serializer = ProjectSerializer(projects, many=True)
+
+    return  JsonResponse(serializer.data, safe=False)
+
+@csrf_exempt #eximo autentificacion
+def GetRequirements(request):
     projects = Project.objects.all()
     serializer = ProjectSerializer(projects, many=True)
 
