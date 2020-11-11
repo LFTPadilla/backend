@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from django.db import models
-from .models import TeamMember
-from .models import Project
+from .models import TeamMember, Requirement, Project
 
 
 class TeamMemberSerializer(serializers.ModelSerializer):
@@ -13,3 +12,9 @@ class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
         fields = ('ProjectId', 'Title','Description','StartDate','EndDate','Active')        
+
+class RequirementSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Requirement 
+        fields = ('RequirementId', 'ProjectId', 'Title', 'Description', 'EspecificationLink', 
+        'Creation', 'Edition', 'PlannedEffort', 'RealEffort')
