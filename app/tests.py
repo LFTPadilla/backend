@@ -4,10 +4,13 @@ License: MIT
 Copyright (c) 2019 - present AppSeed.us
 """
 
-from django.test import TestCase
+from django.test import TestCase    #Testear cosas de la BD
+import unittest                     #Testear normal
 
 # Create your tests here.
 
 class NumberTestCase(TestCase):
-  def simple_test(self):    
-    self.assertEqual(5,4) 
+
+  #Ojo, Deben llevar test_ para que funcione      
+  def test_number_sum(self):    
+    self.assertEqual("SI", "SI")
