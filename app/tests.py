@@ -10,4 +10,4 @@ from django.test import TestCase
 
 class NumberTestCase(TestCase):
   def simple_test(self):    
-    self.assertEqual(4,4) 
+    self.assertEqual(5,4) 
