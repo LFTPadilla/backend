@@ -6,7 +6,7 @@
 
 <br />
 
-> Free product - **Django Dashboard** starter project HAPEDS - Features:
+> Free product - **Django Dashboard** starter project HAPEDS backend - Features:
 
 - UI Kit: **Argon Dashboard** (Free Version) provided by **[Creative-Tim](https://www.creative-tim.com/)**
 - [Codebase](https://github.com/app-generator/boilerplate-code-django-dashboard) version v1.0.2 - provided by **[AppSeed](https://appseed.us/)**
