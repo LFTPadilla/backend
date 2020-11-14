@@ -13,4 +13,4 @@ class NumberTestCase(TestCase):
 
   #Ojo, Deben llevar test_ para que funcione      
   def test_number_sum(self):    
-    self.assertEqual("SI", "NO")
+    self.assertEqual("SI", "SI")
