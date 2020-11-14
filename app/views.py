@@ -62,6 +62,14 @@ def list_projects(request):
     return  JsonResponse(serializer.data, safe=False)
 
 @csrf_exempt #eximo autentificacion
+def GetRequirement(request):
+    data = JSONParser().parse(request)
+    requirements = Requirement.objects.get(pk=data["requirementId"])
+    serializer = RequirementSerializer(requirements, many=False)
+
+    return  JsonResponse(serializer.data, safe=False)
+
+@csrf_exempt #eximo autentificacion
 def GetRequirements(request):
     requirements = Requirement.objects.all()
     serializer = RequirementSerializer(requirements, many=True)
