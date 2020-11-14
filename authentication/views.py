@@ -9,49 +9,43 @@ from django.shortcuts import render
 # Create your views here.
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
-from django.contrib.auth.models import User
 from django.forms.utils import ErrorList
 from django.http import HttpResponse, JsonResponse
 from .forms import LoginForm, SignUpForm
-import base64
+
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from .serializers import UserSerializer
 from .model.ServiceObject import ServiceObject,ServiceObjectEncoder
-from rest_framework import routers, serializers, viewsets
+from rest_framework import routers,  viewsets #serializers,
+from django.core import serializers
 from rest_framework.parsers import JSONParser
+import base64
 import json
 from django.views.decorators.csrf import csrf_protect
 
-
+from app.models import TeamMember
+from app.serializer import TeamMemberSerializer
 
 @csrf_exempt 
 def login_view(request):
-    serviceObj = {
-        "Success": False,
-        "Messege": '',
-        "Data":[]
-    };
-    print(serviceObj)
+    
+    result = False
+    userSerilized = None
     if request.method == "POST":
         data = JSONParser().parse(request)
         username = data['login']
         password = data['password']
         user = authenticate(username=username, password=password)
-        print(user)
         if user is not None:
-            log = login(request, user)
-            serviceObj.Success = True
-            print(log)
-        else:
-            msg = 'Invalid credentials'   
-
-    dataReturn = json.dumps(str(serviceObj))
-
-    print(dataReturn)
-    print(json.loads(str(serviceObj.__dict__)))
-    return  JsonResponse(dataReturn, safe=False)
-    #return render(request, "accounts/login.html", {"form": form, "msg" : msg})
+            member = TeamMember.objects.filter(user=user)
+            serializer = TeamMemberSerializer(member, many=True)
+            userSerilized = serializer.data[0]
+            print(serializer.data[0])
+            login(request, user)
+            result = True
+    
+    return  JsonResponse({'Success':result, 'User':userSerilized}, safe=False)
 
     
 
