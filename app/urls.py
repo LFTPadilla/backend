@@ -20,6 +20,10 @@ urlpatterns = [
     path('GetRequirement/', views.GetRequirement, name='GetRequirement'),
     path('SaveRequirement/', views.SaveRequirement, name='SaveRequirement'),
     path('switch-member/', views.switch_active_member, name='switch-member'),
-    path('list-projects/', views.list_projects, name='list_projects'),
+    path('GetProjects/', views.GetProjects, name='GetProjects'),
+    path('SaveProject/', views.SaveProject, name='SaveProject'),
+    path('GetIterations/', views.GetIterations, name='GetIterations'),
+    path('SaveIteration/', views.SaveIteration, name='SaveIteration'),
+    path('SaveTask/', views.SaveTask, name='SaveTask')
 
 ]
