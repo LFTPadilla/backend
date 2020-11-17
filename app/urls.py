@@ -24,6 +24,7 @@ urlpatterns = [
     path('SaveProject/', views.SaveProject, name='SaveProject'),
     path('GetIterations/', views.GetIterations, name='GetIterations'),
     path('SaveIteration/', views.SaveIteration, name='SaveIteration'),
+    path('GetTasks/', views.GetTasks, name='GetTasks'),
     path('SaveTask/', views.SaveTask, name='SaveTask')
 
 ]
