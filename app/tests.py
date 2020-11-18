@@ -15,7 +15,7 @@ class ProjectTest(TestCase):
     """ Test module for Project model """
 
     def setUp(self):
-        proj = Project.objects.create(ProjectId='Proj1', Title='Proyecto prueba', Description='pruebas', StartDate=timezone.now(), EndDate=timezone.now(),Active=True)
+        proj = Project.objects.create(ProjectId='Proj', Title='Proyecto prueba', Description='pruebas', StartDate=timezone.now(), EndDate=timezone.now(),Active=True)
         
         itera = Iteration.objects.create(IterationCode="Iter1",ProjectId=proj,Title="Iteracion prueba",StartDate=timezone.now(), PlannedEndDate=timezone.now(),PlannedEffort=2.5)
         
@@ -23,7 +23,6 @@ class ProjectTest(TestCase):
 
         task = IterationTask.objects.create(IterationTaskCode="task1",IterationCode=itera,ProjectId=proj,RequirementId=req,Title="Tarea prueba",TaskType="Desarrollo",PlannedHours=20, State="Planned",Creation="",Edition="",PlannedEffort=2.5)
         
-        proxy = TaskProxy.objects.create(IterationTaskCode=task,IterationCode=itera,ProjectId=proj,Title="Proxy prueba",Type="Desarrollador",EffortAvg=20)
 
 
     def test_project(self):
@@ -42,8 +41,6 @@ class ProjectTest(TestCase):
         task = IterationTask.objects.get(IterationTaskCode='task1')
         self.assertEqual(task.get_main(), "task1: Tarea prueba")
 
-    def test_TaskProxy(self):
-        proxy = TaskProxy.objects.get(ProjectId='Proj')
-        self.assertEqual(proxy.get_main(), "Desarrollador: Proxy prueba")
+
         
         
