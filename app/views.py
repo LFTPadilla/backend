@@ -15,7 +15,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django import template
 
 from .models import TeamMember, Project, Requirement, Iteration, IterationTask
-from .serializer import TeamMemberSerializer, ProjectSerializer, RequirementSerializer, IterationSerializer
+from .serializer import TeamMemberSerializer, ProjectSerializer, RequirementSerializer, IterationSerializer, TaskSerializer
 
 
 @login_required(login_url="/login/")
@@ -106,7 +106,15 @@ def GetRequirement(request):
 
 @csrf_exempt  # eximo autentificacion
 def GetRequirements(request):
-    requirements = Requirement.objects.all()
+    #Obtener la info enviada del frontend
+    data = JSONParser().parse(request)
+    print("DATA del front******:", data)
+    projectId = data["projectId"]        
+    #Buscar el proy con el id seleccionado (Todo el obj)               
+    project = Project.objects.get(ProjectId=projectId)
+    #Filtrar para obtener los reqs con ese proy asociado
+    requirements = Requirement.objects.filter(ProjectId=project)
+
     serializer = RequirementSerializer(requirements, many=True)
 
     return JsonResponse(serializer.data, safe=False)
@@ -171,7 +179,11 @@ def create_member(request, doc, names, mail, proxy_factor, av_week_hours, active
 
 @csrf_exempt
 def GetIterations(request):
-    iterations = Iteration.objects.all()
+    data = JSONParser().parse(request)
+    # print("AAAAAAAAAAH",data)
+    projectId = data["projectId"]
+    #print("Proyecto Seleccionado",projectId)
+    iterations = Iteration.objects.filter(ProjectId=projectId)
     serializer = IterationSerializer(iterations, many=True)
 
     return JsonResponse(serializer.data, safe=False)
@@ -205,6 +217,25 @@ def SaveIteration(request):
 
 
 @csrf_exempt
+def GetTasks(request):
+    data = JSONParser().parse(request)
+    print("AAAAAAAAAAH", data)
+    projectId = data["projectId"]
+    iterationCode = data["iterationCode"]
+    print("Proyecto Seleccionado", projectId,
+          "E iteración seleccionada", iterationCode)
+    project = Project.objects.get(pk=projectId)
+    iteration = Iteration.objects.get(
+        IterationCode=iterationCode, ProjectId=projectId)
+
+    tasks = IterationTask.objects.filter(
+        ProjectId=project, IterationCode=iteration)
+    serializer = TaskSerializer(tasks, many=True)
+
+    return JsonResponse(serializer.data, safe=False)
+
+
+@csrf_exempt
 def SaveTask(request):
     data = JSONParser().parse(request)
     print("Data: ", data)
@@ -227,11 +258,12 @@ def SaveTask(request):
     project = Project.objects.get(pk=projectId)
     iteration = Iteration.objects.get(
         IterationCode=iterationCode, ProjectId=projectId)
-    req = Requirement.objects.get(RequirementId=requirementId, ProjectId=projectId)    
+    req = Requirement.objects.get(
+        RequirementId=requirementId, ProjectId=projectId)
 
-    task = IterationTask(IterationTaskCode=taskCode, IterationCode=iteration, ProjectId=project, 
-        RequirementId= req, Title=taskTitle, TaskType=taskType, PlannedEffort=plannedEffort,
-        RealEffort=realEffort, PlannedHours=plannedHours, RealHours=realHours, State=state)
+    task = IterationTask(IterationTaskCode=taskCode, IterationCode=iteration, ProjectId=project,
+                         RequirementId=req, Title=taskTitle, TaskType=taskType, PlannedEffort=plannedEffort,
+                         RealEffort=realEffort, PlannedHours=plannedHours, RealHours=realHours, State=state)
 
     task.save()
 

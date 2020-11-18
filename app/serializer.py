@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.db import models
-from .models import TeamMember, Requirement, Project, Iteration
+from .models import TeamMember, Requirement, Project, Iteration, IterationTask
 
 
 class TeamMemberSerializer(serializers.ModelSerializer):
@@ -22,5 +22,11 @@ class RequirementSerializer(serializers.ModelSerializer):
 class IterationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Iteration 
-        fields = ('IterationCode', 'Title', 'StartDate', 'PlannedEndDate', 
+        fields = ('IterationCode', 'ProjectId', 'Title', 'StartDate', 'PlannedEndDate', 
         'RealEndDate', 'PlannedEffort', 'RealEffort', 'Progress')        
+
+class TaskSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = IterationTask 
+        fields = ('IterationTaskCode','IterationCode','ProjectId', 'RequirementId', 'Title', 'TaskType',
+        'PlannedEffort', 'RealEffort', 'PlannedHours', 'RealHours', 'State', 'Creation', 'Edition')        
