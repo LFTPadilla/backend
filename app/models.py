@@ -48,6 +48,9 @@ class Requirement(models.Model):
     class Meta:
         unique_together = ('RequirementId', 'ProjectId')
 
+    def get_main(self):
+        return self.RequirementId + ': ' + self.Title
+
     def __str__(self):
         return "{}|{}".format(self.RequirementId, self.ProjectId.Title)
 
@@ -78,6 +81,9 @@ class Iteration(models.Model):
 
     class Meta:
         unique_together = ('IterationCode', 'ProjectId')
+
+    def get_main(self):
+        return self.IterationCode + ': ' + self.Title
 
     def __str__(self):
         return "{}|{}".format(self.ProjectId, self.IterationCode)
@@ -112,6 +118,9 @@ class IterationTask(models.Model):
 
     class Meta:
         unique_together = ('IterationTaskCode', 'IterationCode', 'ProjectId')
+    
+    def get_main(self):
+        return self.IterationTaskCode + ': ' + self.Title
 
     def __str__(self):
         return "{}|{}".format(self.IterationCode, self.IterationTaskCode)
@@ -156,6 +165,9 @@ class TaskProxy(models.Model):
 
     class Meta:
         unique_together = ('IterationTaskCode', 'IterationCode', 'ProjectId')
+
+    def get_main(self):
+        return self.Type + ': ' + self.Title
 
     def __str__(self):
         return "{}|Effort:{}".format(self.IterationTaskCode, self.EffortAvg)
