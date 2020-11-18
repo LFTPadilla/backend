@@ -15,7 +15,7 @@ class ProjectTest(TestCase):
     """ Test module for Project model """
 
     def setUp(self):
-        proj = Project.objects.create(ProjectId='Proj', Title='Proyecto prueba', Description='pruebas', StartDate=timezone.now(), EndDate=timezone.now(),Active=True)
+        proj = Project.objects.create(ProjectId='Proj1', Title='Proyecto prueba', Description='pruebas', StartDate=timezone.now(), EndDate=timezone.now(),Active=True)
         
         itera = Iteration.objects.create(IterationCode="Iter1",ProjectId=proj,Title="Iteracion prueba",StartDate=timezone.now(), PlannedEndDate=timezone.now(),PlannedEffort=2.5)
         
