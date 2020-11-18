@@ -14,6 +14,9 @@ class Project(models.Model):
     EndDate = models.DateField()
     Active = models.BooleanField()
 
+    def get_main(self):
+        return self.ProjectId + ': ' + self.Title
+
     def __str__(self):
         return self.Title
     #   return "{}|{}".format(self.ProjectId,self.Title)

@@ -29,4 +29,5 @@ class TaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = IterationTask 
         fields = ('IterationTaskCode','IterationCode','ProjectId', 'RequirementId', 'Title', 'TaskType',
-        'PlannedEffort', 'RealEffort', 'PlannedHours', 'RealHours', 'State', 'Creation', 'Edition')        
+        'PlannedEffort', 'RealEffort', 'PlannedHours', 'RealHours', 'State', 'Creation', 'Edition')
+        
