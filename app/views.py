@@ -241,7 +241,7 @@ def SaveTask(request):
     print("Data: ", data)
     data = data["task"]
 
-    taskCode = data["Code"]
+    taskCode = data["IterationTaskCode"]
     taskTitle = data["Title"]
     taskType = data["TaskType"]
     iterationCode = data["IterationCode"]
