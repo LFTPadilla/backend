@@ -31,45 +31,72 @@ from app.serializer import TeamMemberSerializer
 def login_view(request):
     
     result = False
-    userSerilized = None
+    Member = None
     if request.method == "POST":
         data = JSONParser().parse(request)
+        print(data)
         username = data['login']
         password = data['password']
         user = authenticate(username=username, password=password)
+        print(user)
         if user is not None:
             member = TeamMember.objects.filter(user=user)
             serializer = TeamMemberSerializer(member, many=True)
-            userSerilized = serializer.data[0]
+            Member = serializer.data[0]
             print(serializer.data[0])
+            if(username=='roa'):
+                Member['Permissions'] = ['planner-scrum']
+            else:
+                Member['Permissions'] = ['planner-member']
             login(request, user)
             result = True
     
-    return  JsonResponse({'Success':result, 'User':userSerilized}, safe=False)
+    return  JsonResponse({'Success':result, 'User':{'Member':Member}}, safe=False)
 
     
 
+@csrf_exempt 
 def register_user(request):
-
-    msg     = None
-    success = False
+    data = JSONParser().parse(request)
+    print(data)
+    username = data['login']
+    document = data['document']
+    email = data['email']
+    password = data['password']
     
-    if request.method == "POST":
-        form = SignUpForm(request.POST)
-        if form.is_valid():
-            form.save()
-            username = form.cleaned_data.get("username")
-            raw_password = form.cleaned_data.get("password1")
-            user = authenticate(username=username, password=raw_password)
+    msg = ''
+    scc = None
 
-            msg     = 'User created.'
-            success = True
+
+    #VALIDACIONES
+    try:
+        userExist = User.objects.filter(username=username)
+        print(userExist)
+        if(userExist):
+            raise ValueError('El username '+username+' ya se encuentra registrado.')
             
-            #return redirect("/login/")
+        emailExist = User.objects.filter(email=email)
+        if(emailExist):
+            raise ValueError('El email '+email+' ya se encuentra registrado.')
 
-        else:
-            msg = 'Form is not valid'    
-    else:
-        form = SignUpForm()
+        member = TeamMember.objects.filter(Document=document)
+        if(member):
+            raise ValueError('El documento '+documento+' ya se encuentra registrado.')
+            
+    except ValueError as msg:
+        return  JsonResponse({'Success':False, 'Message': msg.args[0], 'User':None}, safe=False)
+    except Exception as err:
+        print("ERRORR",err)
+        return  JsonResponse({'Success':False, 'Message': "ServerError "+ err.args[0], 'User':None}, safe=False)
 
-    return render(request, "accounts/register.html", {"form": form, "msg" : msg, "success" : success })
+    try:
+        user = User.objects.create(username=username,email=email)
+        user.set_password(password)
+        user.save()
+        member = TeamMember.objects.create(user=user,Mail=email,ProxyFactor=0,AvailableWeekHours=40,Active=True,Names="",Document=document)
+        serializer = TeamMemberSerializer(member, many=False)
+        print(serializer.data)
+        return  JsonResponse({'Success':True,'Message': '', 'User':serializer.data}, safe=False)
+    except Exception as err:
+        return  JsonResponse({'Success':False,'Message': "ServerError "+ err.args[0], 'User':None}, safe=False)
+   
