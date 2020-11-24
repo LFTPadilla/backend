@@ -25,6 +25,7 @@ urlpatterns = [
     path('GetIterations/', views.GetIterations, name='GetIterations'),
     path('SaveIteration/', views.SaveIteration, name='SaveIteration'),
     path('GetTasks/', views.GetTasks, name='GetTasks'),
-    path('SaveTask/', views.SaveTask, name='SaveTask')
+    path('SaveTask/', views.SaveTask, name='SaveTask'),
+    path('SavePlanningEntry/', views.SavePlanningEntry, name='SavePlanningEntry')
 
 ]

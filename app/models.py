@@ -191,26 +191,25 @@ class PlanningEntry(models.Model):
     RealEffort = models.DecimalField(max_digits=3, decimal_places=1)
     State = models.CharField(max_length=20, blank=False)
     Anotation = models.CharField(max_length=250)
+    StartDate = models.DateTimeField()
+    EndDate = models.DateTimeField()
     Document = models.ForeignKey(
-        'TeamMember', on_delete=models.DO_NOTHING, blank=False)
+        'TeamMember', on_delete=models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
-        unique_together = ('IterationTaskCode',
-                           'PlanningEntryId', 'IterationCode', 'ProjectId')
+        unique_together = ('IterationTaskCode', 'IterationCode', 'ProjectId', 'StartDate', 'EndDate')
 
     def __str__(self):
         return "PlanningEntry: {}| Assigned to:{}".format(self.IterationTaskCode, self.Document)
 
 
 class PlanningPeriod(models.Model):
-
+    
     PeriodId = models.AutoField(primary_key=True)
     PlanningEntryId = models.OneToOneField(
         'PlanningEntry', on_delete=models.DO_NOTHING)
 
     PeriodTitle = models.CharField(max_length=50)
-    StartDate = models.DateTimeField()
-    EndDate = models.DateTimeField()
     AvailableHours = models.IntegerField()
     PlannedEffort = models.DecimalField(max_digits=3, decimal_places=1)
     PlannedHours = models.DecimalField(max_digits=3, decimal_places=1)
