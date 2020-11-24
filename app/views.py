@@ -14,7 +14,7 @@ import json
 from django.views.decorators.csrf import csrf_exempt
 from django import template
 
-from .models import TeamMember, Project, Requirement, Iteration, IterationTask
+from .models import TeamMember, Project, Requirement, Iteration, IterationTask, PlanningEntry
 from .serializer import TeamMemberSerializer, ProjectSerializer, RequirementSerializer, IterationSerializer, TaskSerializer
 
 
@@ -106,13 +106,13 @@ def GetRequirement(request):
 
 @csrf_exempt  # eximo autentificacion
 def GetRequirements(request):
-    #Obtener la info enviada del frontend
+    # Obtener la info enviada del frontend
     data = JSONParser().parse(request)
     print("DATA del front******:", data)
-    projectId = data["projectId"]        
-    #Buscar el proy con el id seleccionado (Todo el obj)               
+    projectId = data["projectId"]
+    # Buscar el proy con el id seleccionado (Todo el obj)
     project = Project.objects.get(ProjectId=projectId)
-    #Filtrar para obtener los reqs con ese proy asociado
+    # Filtrar para obtener los reqs con ese proy asociado
     requirements = Requirement.objects.filter(ProjectId=project)
 
     serializer = RequirementSerializer(requirements, many=True)
@@ -182,7 +182,7 @@ def GetIterations(request):
     data = JSONParser().parse(request)
     # print("AAAAAAAAAAH",data)
     projectId = data["projectId"]
-    #print("Proyecto Seleccionado",projectId)
+    # print("Proyecto Seleccionado",projectId)
     iterations = Iteration.objects.filter(ProjectId=projectId)
     serializer = IterationSerializer(iterations, many=True)
 
@@ -270,6 +270,53 @@ def SaveTask(request):
     dataReturn = json.dumps(str("True"))
     return JsonResponse(dataReturn, safe=False)
 
+
+@csrf_exempt
+def SavePlanningEntry(request):
+    data = JSONParser().parse(request)
+    print("Data: ", data)
+    data = data["planningEntry"]
+
+    iterationCode = data["IterationCode"]
+    projectId = data["ProjectId"]
+    iterationTaskCode = data["IterationTaskCode"]
+    creation = data["Creation"]
+    edition = data["Edition"]
+    plannedHours = data["PlannedHours"]
+    realHours = data["RealHours"]
+    plannedEffort = data["PlannedEffort"]
+    realEffort = data["RealEffort"]
+    state = data["State"]
+    annotation = data["Annotation"]
+    startDate = data["StartDate"]
+    endDate = data["EndDate"]
+    document = data["Document"]
+
+    project = Project.objects.get(pk=projectId)
+    iteration = Iteration.objects.get(
+        IterationCode=iterationCode, ProjectId=projectId)    
+    print("BUSSSSCANDOOOOOOOOO la tarea con iteracion:",iteration, "y proyecto",project)
+    
+    task = IterationTask.objects.get(
+        IterationTaskCode=iterationTaskCode, IterationCode=iteration, ProjectId=projectId)
+
+    if document == "":
+        member = None
+    else:
+        member = TeamMember.objects.get(Document=document)  
+
+    # Buscar al member por el document
+    
+    planningEntry = PlanningEntry(IterationTaskCode=task, IterationCode=iteration, ProjectId=project,
+                                  Creation=creation, Edition=edition, PlannedHours=plannedHours,
+                                  RealHours=realHours, PlannedEffort=plannedEffort, 
+                                  RealEffort=realEffort, State=state, Anotation=annotation, StartDate=startDate,
+                                  EndDate=endDate, Document=member)
+
+    planningEntry.save()
+
+    dataReturn = json.dumps(str("True"))
+    return JsonResponse(dataReturn, safe=False)
 
 """ @login_required(login_url="/login/")
 def pages(request):
