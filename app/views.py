@@ -15,8 +15,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django import template
 
 from .models import TeamMember, Project, Requirement, Iteration, IterationTask, PlanningEntry
-from .serializer import TeamMemberSerializer, ProjectSerializer, RequirementSerializer, IterationSerializer, TaskSerializer
-
+from .serializer import TeamMemberSerializer, ProjectSerializer, RequirementSerializer, IterationSerializer, TaskSerializer, PlanningEntrySerializer
 
 @login_required(login_url="/login/")
 def index(request):
@@ -222,14 +221,14 @@ def GetTasks(request):
     print("AAAAAAAAAAH", data)
     projectId = data["projectId"]
     iterationCode = data["iterationCode"]
-    print("Proyecto Seleccionado", projectId,
-          "E iteración seleccionada", iterationCode)
+
     project = Project.objects.get(pk=projectId)
     iteration = Iteration.objects.get(
         IterationCode=iterationCode, ProjectId=projectId)
 
     tasks = IterationTask.objects.filter(
         ProjectId=project, IterationCode=iteration)
+
     serializer = TaskSerializer(tasks, many=True)
 
     return JsonResponse(serializer.data, safe=False)
@@ -272,6 +271,33 @@ def SaveTask(request):
 
 
 @csrf_exempt
+def GetPlanningEntries(request):
+    data = JSONParser().parse(request)
+    print("PPPPPPPPPPPPPPPPPPPPPP", data)
+    projectId = data["projectId"]
+    iterationCode = data["iterationCode"]
+    iterationTaskCode = data["iterationTaskCode"]
+
+    project = Project.objects.get(pk=projectId)
+    print("Proy",project)
+    iteration = Iteration.objects.get(
+        IterationCode=iterationCode, ProjectId=project)
+    print("Itera",iteration)
+
+    task = IterationTask.objects.filter(
+        ProjectId=project, IterationCode=iteration, IterationTaskCode=iterationTaskCode)
+    print("Tarea",task)
+
+    pEntries = PlanningEntry.objects.filter(
+        ProjectId=project, IterationCode=iteration, IterationTaskCode=task)
+    print("Planning Entries",pEntries)
+
+    serializer = PlanningEntrySerializer(pEntries, many=True)
+
+    return JsonResponse(serializer.data, safe=False)
+
+
+@csrf_exempt
 def SavePlanningEntry(request):
     data = JSONParser().parse(request)
     print("Data: ", data)
@@ -294,22 +320,23 @@ def SavePlanningEntry(request):
 
     project = Project.objects.get(pk=projectId)
     iteration = Iteration.objects.get(
-        IterationCode=iterationCode, ProjectId=projectId)    
-    print("BUSSSSCANDOOOOOOOOO la tarea con iteracion:",iteration, "y proyecto",project)
-    
+        IterationCode=iterationCode, ProjectId=projectId)
+    print("BUSSSSCANDOOOOOOOOO la tarea con iteracion:",
+          iteration, "y proyecto", project)
+
     task = IterationTask.objects.get(
         IterationTaskCode=iterationTaskCode, IterationCode=iteration, ProjectId=projectId)
 
     if document == "":
         member = None
     else:
-        member = TeamMember.objects.get(Document=document)  
+        member = TeamMember.objects.get(Document=document)
 
     # Buscar al member por el document
-    
+
     planningEntry = PlanningEntry(IterationTaskCode=task, IterationCode=iteration, ProjectId=project,
                                   Creation=creation, Edition=edition, PlannedHours=plannedHours,
-                                  RealHours=realHours, PlannedEffort=plannedEffort, 
+                                  RealHours=realHours, PlannedEffort=plannedEffort,
                                   RealEffort=realEffort, State=state, Anotation=annotation, StartDate=startDate,
                                   EndDate=endDate, Document=member)
 
@@ -317,6 +344,34 @@ def SavePlanningEntry(request):
 
     dataReturn = json.dumps(str("True"))
     return JsonResponse(dataReturn, safe=False)
+
+@csrf_exempt
+def SaveNewStatePlanningEntry(request):
+    data = JSONParser().parse(request)
+    print("Data: ", data)
+    
+    taskCode = data["taskcode"]
+    iterationCode = data["iterationCode"]
+    projectId = data["projectId"]
+    state = data["state"]
+
+    project = Project.objects.get(pk=projectId)
+    iteration = Iteration.objects.get(
+        IterationCode=iterationCode, ProjectId=projectId)
+    
+    task = IterationTask.objects.get(IterationTaskCode=taskCode, IterationCode=iteration, ProjectId=project)
+
+    planningEntry = PlanningEntry.objects.get(IterationTaskCode=task, IterationCode=iteration, ProjectId=project)
+
+    task.State = state
+    planningEntry.State = state
+
+    task.save()
+    planningEntry.save()
+
+    dataReturn = json.dumps(str("True"))
+    return JsonResponse(dataReturn, safe=False)
+
 
 """ @login_required(login_url="/login/")
 def pages(request):
