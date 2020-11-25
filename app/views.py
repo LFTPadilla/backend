@@ -359,6 +359,7 @@ def SaveNewStatePlanningEntry(request):
     data = JSONParser().parse(request)
     print("Data: ", data)
     
+    pEntryId = data["pEntryId"]
     taskCode = data["taskcode"]
     iterationCode = data["iterationCode"]
     projectId = data["projectId"]
@@ -370,7 +371,7 @@ def SaveNewStatePlanningEntry(request):
     
     task = IterationTask.objects.get(IterationTaskCode=taskCode, IterationCode=iteration, ProjectId=project)
 
-    planningEntry = PlanningEntry.objects.get(IterationTaskCode=task, IterationCode=iteration, ProjectId=project)
+    planningEntry = PlanningEntry.objects.get(pk=pEntryId)
 
     task.State = state
     planningEntry.State = state

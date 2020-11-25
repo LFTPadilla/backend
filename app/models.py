@@ -197,7 +197,7 @@ class PlanningEntry(models.Model):
         'TeamMember', on_delete=models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
-        unique_together = ('IterationTaskCode', 'IterationCode', 'ProjectId', 'StartDate', 'EndDate')
+        unique_together = ('IterationTaskCode', 'IterationCode', 'ProjectId', 'StartDate')
 
     def __str__(self):
         return "PlanningEntry: {}| Assigned to:{}".format(self.IterationTaskCode, self.Document)

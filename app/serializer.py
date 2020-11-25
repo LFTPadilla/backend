@@ -34,7 +34,7 @@ class TaskSerializer(serializers.ModelSerializer):
 class PlanningEntrySerializer(serializers.ModelSerializer):
     class Meta:
         model = PlanningEntry 
-        fields = ('IterationTaskCode','IterationCode','ProjectId', 'Creation','Annotation', 'Document',
+        fields = ('IterationTaskCode','IterationCode','ProjectId', 'Creation', 'Document',
         'PlannedEffort', 'RealEffort', 'PlannedHours', 'RealHours', 'State', 'Creation', 'Edition', 
         'StartDate', 'EndDate')
         
