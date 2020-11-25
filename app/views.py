@@ -351,8 +351,11 @@ def SavePlanningEntry(request):
 
     planningEntry.save()
 
-    dataReturn = json.dumps(str("True"))
-    return JsonResponse(dataReturn, safe=False)
+    serializerPlan = PlanningEntrySerializer(planningEntry,many=False)
+    idPlan = serializerPlan.data['PlanningEntryId']   
+     
+    
+    return JsonResponse({'PlaningEntryId':idPlan}, safe=False)
 
 @csrf_exempt
 def SaveNewStatePlanningEntry(request):
