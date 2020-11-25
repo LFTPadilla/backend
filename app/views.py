@@ -15,7 +15,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django import template
 
 from .models import TeamMember, Project, Requirement, Iteration, IterationTask, PlanningEntry
-from .serializer import TeamMemberSerializer, ProjectSerializer, RequirementSerializer, IterationSerializer, TaskSerializer
+from .serializer import TeamMemberSerializer, ProjectSerializer, RequirementSerializer, IterationSerializer, TaskSerializer, PlanningEntrySerializer
 
 
 @login_required(login_url="/login/")
@@ -231,6 +231,15 @@ def GetTasks(request):
     tasks = IterationTask.objects.filter(
         ProjectId=project, IterationCode=iteration)
     serializer = TaskSerializer(tasks, many=True)
+    tasksSerialized = serializer.data
+    for i in tasksSerialized:
+        #print('TAREA',i['ProjectId'],i['IterationCode'],i['IterationTaskCode'])
+        
+        task = IterationTask.objects.get(ProjectId=project, IterationCode=iteration,IterationTaskCode=i['IterationTaskCode'] )
+        plan = PlanningEntry.objects.filter(ProjectId=project, IterationCode=iteration,IterationTaskCode=task)
+        serializerPlan = PlanningEntrySerializer(plan, many=True).data
+        i['Planning'] = serializerPlan
+    
 
     return JsonResponse(serializer.data, safe=False)
 
