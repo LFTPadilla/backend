@@ -105,15 +105,19 @@ def GetRequirement(request):
 
 @csrf_exempt  # eximo autentificacion
 def GetRequirements(request):
+    print("-----------------------------------LLEGADA-------------------------******:", request)
     # Obtener la info enviada del frontend
-    data = JSONParser().parse(request)
-    print("DATA del front******:", data)
-    projectId = data["projectId"]
-    # Buscar el proy con el id seleccionado (Todo el obj)
-    project = Project.objects.get(ProjectId=projectId)
-    # Filtrar para obtener los reqs con ese proy asociado
-    requirements = Requirement.objects.filter(ProjectId=project)
-
+    print("-------------------HEADERS:",request.headers['Content-Length'])
+    if int(request.headers['Content-Length']) > 0:
+        data = JSONParser().parse(request)
+        print("--------------PROY:", data)
+        projectId = data["projectId"]
+        # Buscar el proy con el id seleccionado (Todo el obj)
+        project = Project.objects.get(ProjectId=projectId)
+        # Filtrar para obtener los reqs con ese proy asociado
+        requirements = Requirement.objects.filter(ProjectId=project)
+    else:
+        requirements = Requirement.objects.all()
     serializer = RequirementSerializer(requirements, many=True)
 
     return JsonResponse(serializer.data, safe=False)
@@ -134,19 +138,14 @@ def SaveRequirement(request):
     plannedEffort = data['PlannedEffort']
     realEffort = data['RealEffort']
 
-    req = Requirement.objects.get(
-        RequirementId=requirementId, ProjectId=projectId)  # DavREQ01 / BancREQ01
+    project = Project.objects.get(ProjectId=projectId)
 
-    req.Title = title
-    req.Description = description
-    req.EspecificationLink = especificationLink
-    req.Creation = creation
-    req.Edition = edition
-    req.PlannedEffort = plannedEffort
-    req.RealEffort = realEffort
+    req = Requirement(RequirementId=requirementId, ProjectId=project, Title = title, Description = description,
+    EspecificationLink = especificationLink, Creation = creation, Edition = edition, PlannedEffort = plannedEffort,
+    RealEffort = realEffort)  # DavREQ01 / BancREQ01
 
     req.save()
-
+    
     dataReturn = json.dumps(str("True"))
     return JsonResponse(dataReturn, safe=False)
 
