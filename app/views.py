@@ -206,10 +206,18 @@ def SaveIteration(request):
     # progress = data["Progress"]
 
     project = Project.objects.get(pk=projectId)
-    it = Iteration(IterationCode=iterationCode, ProjectId=project, Title=title, StartDate=startDate, PlannedEndDate=plannedEndDate,
-                   PlannedEffort=plannedEffort)
 
-    it.save()
+    existIter = Iteration.objects.get( ProjectId=project, IterationCode=iterationCode) 
+    if(existIter):
+        existIter.Title = title
+        existIter.StartDate = startDate
+        existIter.PlannedEndDate = plannedEndDate
+        existIter.PlannedEffort = plannedEffort        
+        existIter.save()
+    else:
+        it = Iteration(IterationCode=iterationCode, ProjectId=project, Title=title, StartDate=startDate, PlannedEndDate=plannedEndDate,
+                   PlannedEffort=plannedEffort)
+        it.save()
 
     dataReturn = json.dumps(str("True"))
     return JsonResponse(dataReturn, safe=False)
