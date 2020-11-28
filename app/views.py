@@ -205,9 +205,23 @@ def SaveIteration(request):
     # progress = data["Progress"]
 
     project = Project.objects.get(pk=projectId)
-
-    existIter = Iteration.objects.get( ProjectId=project, IterationCode=iterationCode) 
-    if(existIter):
+    """
+    try:
+        existIter = Iteration.objects.get( ProjectId=project, IterationCode=iterationCode) 
+        existIter.Title = title
+        existIter.StartDate = startDate
+        existIter.PlannedEndDate = plannedEndDate
+        existIter.PlannedEffort = plannedEffort        
+        existIter.save()
+    except Exception as identifier:
+        it = Iteration(IterationCode=iterationCode, ProjectId=project, Title=title, StartDate=startDate, PlannedEndDate=plannedEndDate,
+                   PlannedEffort=plannedEffort)
+        it.save()
+    """
+    existIter = Iteration.objects.filter( ProjectId=project, IterationCode=iterationCode) 
+    print(str(existIter)=='<QuerySet []>',str(existIter),existIter)
+    if(str(existIter)!='<QuerySet []>'):
+        existIter = Iteration.objects.get( ProjectId=project, IterationCode=iterationCode) 
         existIter.Title = title
         existIter.StartDate = startDate
         existIter.PlannedEndDate = plannedEndDate
