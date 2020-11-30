@@ -65,8 +65,6 @@ def register_user(request):
     password = data['password']
     
     msg = ''
-    scc = None
-
 
     #VALIDACIONES
     try:
@@ -81,7 +79,7 @@ def register_user(request):
 
         member = TeamMember.objects.filter(Document=document)
         if(member):
-            raise ValueError('El documento '+documento+' ya se encuentra registrado.')
+            raise ValueError('El documento '+document+' ya se encuentra registrado.')
             
     except ValueError as msg:
         return  JsonResponse({'Success':False, 'Message': msg.args[0], 'User':None}, safe=False)
