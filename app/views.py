@@ -77,16 +77,10 @@ def SaveProject(request):
     description = data["Description"]
     startDate = data["StartDate"]
     endDate = data["EndDate"]
-    active = str(data["Active"])
-    print("AYYYYYYYYYYYYYYYYY", active)
-
-    if active == "true":
-        active = True
-    else:
-        active = False
+   
 
     proy = Project(ProjectId=projectId, Title=title, Description=description, StartDate=startDate, EndDate=endDate,
-                   Active=active)
+                   Active=data["Active"])
 
     proy.save()
 
