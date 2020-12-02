@@ -135,14 +135,25 @@ def SaveRequirement(request):
     especificationLink = data['EspecificationLink']
     creation = data['Creation']
     edition = data['Edition']
-    plannedEffort = data['PlannedEffort']
+    plannedEffort = 3#data['PlannedEffort']
     realEffort = data['RealEffort']
 
     project = Project.objects.get(ProjectId=projectId)
+    req = ""
 
-    req = Requirement(RequirementId=requirementId, ProjectId=project, Title = title, Description = description,
-    EspecificationLink = especificationLink, Creation = creation, Edition = edition, PlannedEffort = plannedEffort,
-    RealEffort = realEffort)  # DavREQ01 / BancREQ01
+    if Requirement.objects.filter(RequirementId=requirementId, ProjectId=project).exists():
+        req = Requirement.objects.get(RequirementId=requirementId, ProjectId=project)
+    else:
+        req = Requirement.objects.create(RequirementId=requirementId, ProjectId=project, PlannedEffort=plannedEffort, RealEffort=realEffort) 
+    
+    req.Title = title
+    req.Description = description
+    req.EspecificationLink = especificationLink
+    req.Creation = creation
+    req.Edition = edition
+    req.PlannedEffort = plannedEffort
+    req.RealEffort = realEffort
+
 
     req.save()
     
